@@ -8,3 +8,8 @@ Prompt Cubic is a project that allows you to create and share prompts for AI mod
 - Browse and search for prompts
 - Save and favorite prompts
 
+## Development
+
+```bash
+npx drizzle-kit generate
+```

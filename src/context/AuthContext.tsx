@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { User, Session } from "@supabase/supabase-js";
+import { createUserInDatabase } from "@/utils/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -21,16 +22,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-        setSession(session);
+      async (_event, session) => {
+        if (session?.user) {
+          setUser(session.user);
+          setSession(session);
+          console.log(
+            "User:",
+            session.user.identities?.[0]?.user_id ?? "Unknown"
+          );
+          try {
+            await createUserInDatabase(session.user.id);
+          } catch (error) {
+            console.error("Error ensuring user in database:", error);
+          }
+        } else {
+          setUser(null);
+          setSession(null);
+        }
         setLoading(false);
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setSession(session);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        setSession(session);
+        try {
+          await createUserInDatabase(session.user.id);
+        } catch (error) {
+          console.error("Error ensuring user in database:", error);
+        }
+      } else {
+        setUser(null);
+        setSession(null);
+      }
       setLoading(false);
     });
 
