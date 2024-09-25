@@ -11,7 +11,7 @@ import { PenTool, Share2, Lightbulb, BarChart } from "lucide-react";
 
 const AboutSection: React.FC = () => {
   return (
-    <section className="py-16 px-4 bg-background">
+    <section id="about" className="py-16 px-4 bg-background">
       <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
           About PromptCubic

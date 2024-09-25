@@ -8,6 +8,7 @@ import { Moon, Sun } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import AuthModal from "@/components/AuthModal";
+import { useRouter } from "next/navigation";
 
 const Logo = ({ className = "w-6 h-6", isScrolled = false }) => (
   <svg
@@ -48,6 +49,7 @@ export function Navbar() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, session, setUser, setSession } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     let lastScrollY = window.pageYOffset;
@@ -75,6 +77,18 @@ export function Navbar() {
 
   const handleAuthModalClose = () => {
     setIsAuthModalOpen(false);
+  };
+
+  const scrollToAbout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (router.pathname !== "/") {
+      router.push("/#about");
+    } else {
+      const aboutSection = document.getElementById("about");
+      if (aboutSection) {
+        aboutSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   };
 
   const renderAuthButton = () => {
@@ -137,12 +151,13 @@ export function Navbar() {
                 isScrolled ? "ml-2" : "ml-6"
               }`}
             >
-              <Link
-                href="/about"
+              <a
+                href="#about"
+                onClick={scrollToAbout}
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
                 About
-              </Link>
+              </a>
               <Link
                 href="/know-more"
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
@@ -190,12 +205,13 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="sm:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link
-              href="/about"
+            <a
+              href="#about"
+              onClick={scrollToAbout}
               className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium"
             >
               About
-            </Link>
+            </a>
             <Link
               href="/know-more"
               className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium"
