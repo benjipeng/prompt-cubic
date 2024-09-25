@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-
-// Remove the unused import:
-// import { User, Session } from "@supabase/supabase-js";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -101,79 +101,100 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg relative z-50 w-96">
-        <h2 className="text-2xl mb-4">{isSignUp ? "Sign Up" : "Sign In"}</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        {success && <p className="text-green-500 mb-4">{success}</p>}
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-2 p-2 border rounded"
-        />
-        {isSignUp && (
-          <input
-            type="text"
-            placeholder="Display Name"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full mb-2 p-2 border rounded"
-          />
-        )}
-        <div className="relative">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full mb-2 p-2 border rounded"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-2"
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
+      <Card className="w-[400px] bg-card text-card-foreground">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-2xl font-bold">
+            {isSignUp ? "Sign Up" : "Sign In"}
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
           >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
-        </div>
-        {isSignUp && (
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full mb-4 p-2 border rounded"
+            <X size={18} />
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {error && <p className="text-destructive mb-4">{error}</p>}
+          {success && <p className="text-green-500 mb-4">{success}</p>}
+          <div className="space-y-4">
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-input text-input-foreground border-input"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-2"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
+            {isSignUp && (
+              <Input
+                type="text"
+                placeholder="Display Name"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className="bg-input text-input-foreground border-input"
+              />
+            )}
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="bg-input text-input-foreground border-input"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </Button>
+            </div>
+            {isSignUp && (
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="bg-input text-input-foreground border-input"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </Button>
+              </div>
+            )}
           </div>
-        )}
-        <Button onClick={handleAuth} className="w-full mb-2">
-          {isSignUp ? "Sign Up" : "Sign In"}
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => {
-            setIsSignUp(!isSignUp);
-            setError("");
-            setSuccess("");
-          }}
-          className="w-full"
-        >
-          {isSignUp ? "Switch to Sign In" : "Switch to Sign Up"}
-        </Button>
-        <Button variant="ghost" onClick={onClose} className="mt-4">
-          Close
-        </Button>
-      </div>
+          <Button
+            onClick={handleAuth}
+            className="w-full mt-6 bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            {isSignUp ? "Sign Up" : "Sign In"}
+          </Button>
+          <Separator className="my-4" />
+          <Button
+            variant="outline"
+            onClick={() => {
+              setIsSignUp(!isSignUp);
+              setError("");
+              setSuccess("");
+            }}
+            className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80"
+          >
+            {isSignUp ? "Switch to Sign In" : "Switch to Sign Up"}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
