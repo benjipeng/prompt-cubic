@@ -2,16 +2,18 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import AuthModal from "@/components/AuthModal";
 
-const Logo = ({ className = "w-8 h-8" }) => (
+const Logo = ({ className = "w-6 h-6", isScrolled = false }) => (
   <svg
-    className={className}
+    className={`${className} transition-transform duration-300 ${
+      isScrolled ? "rotate-90" : "rotate-0"
+    }`}
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -45,6 +47,21 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, session, setUser, setSession } = useAuth();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    let lastScrollY = window.pageYOffset;
+
+    const handleScroll = () => {
+      const currentScrollY = window.pageYOffset;
+      setIsScrolled(currentScrollY > lastScrollY);
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -99,15 +116,27 @@ export function Navbar() {
   );
 
   return (
-    <nav className="border-b relative z-10">
+    <nav className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b shadow-sm transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-12">
-          <div className="flex">
+          <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <Logo />
-              <span className="ml-2 text-xl font-bold">promptcubic</span>
+              <Logo isScrolled={isScrolled} />
+              <span
+                className={`ml-2 text-lg font-bold transition-all duration-300 ${
+                  isScrolled
+                    ? "opacity-0 w-0 overflow-hidden"
+                    : "opacity-100 w-auto"
+                }`}
+              >
+                PromptCubic
+              </span>
             </Link>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <div
+              className={`flex space-x-8 transition-all duration-300 ${
+                isScrolled ? "ml-2" : "ml-6"
+              }`}
+            >
               <Link
                 href="/about"
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
