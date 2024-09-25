@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
+import ReactMarkdown from "react-markdown"; // Add this import
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Prompt {
   id: string;
@@ -135,13 +137,26 @@ export function Dashboard() {
           className="mb-2"
           required
         />
-        <Textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Prompt Content"
-          className="mb-2"
-          required
-        />
+        <Tabs defaultValue="edit" className="w-full">
+          <TabsList className="mb-2">
+            <TabsTrigger value="edit">Edit</TabsTrigger>
+            <TabsTrigger value="preview">Preview</TabsTrigger>
+          </TabsList>
+          <TabsContent value="edit">
+            <Textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Prompt Content (Markdown supported)"
+              className="mb-2 font-mono min-h-[200px]"
+              required
+            />
+          </TabsContent>
+          <TabsContent value="preview">
+            <div className="border rounded-md p-4 mb-2 min-h-[200px] prose dark:prose-invert max-w-none">
+              <ReactMarkdown>{content}</ReactMarkdown>
+            </div>
+          </TabsContent>
+        </Tabs>
         <Button type="submit">{editingId ? "Update" : "Create"} Prompt</Button>
       </form>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -151,7 +166,9 @@ export function Dashboard() {
               <CardTitle>{prompt.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription>{prompt.content}</CardDescription>
+              <CardDescription className="prose dark:prose-invert max-w-none">
+                <ReactMarkdown>{prompt.content}</ReactMarkdown>
+              </CardDescription>
               <div className="mt-4">
                 <Button onClick={() => handleEdit(prompt)} className="mr-2">
                   Edit

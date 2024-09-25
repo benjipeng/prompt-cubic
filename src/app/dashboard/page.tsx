@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { Dashboard } from "@/components/Dashboard";
+import { Loader2 } from "lucide-react"; // Import the Loader2 icon
 
 export default function DashboardPage() {
   const { user, session, loading } = useAuth();
@@ -16,7 +17,11 @@ export default function DashboardPage() {
   }, [user, loading, router]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   if (!user || !session) {
