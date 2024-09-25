@@ -8,7 +8,7 @@ import { Moon, Sun } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import AuthModal from "@/components/AuthModal";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const Logo = ({ className = "w-6 h-6", isScrolled = false }) => (
   <svg
@@ -49,6 +49,7 @@ export function Navbar() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, session, setUser, setSession } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
@@ -79,14 +80,14 @@ export function Navbar() {
     setIsAuthModalOpen(false);
   };
 
-  const scrollToAbout = (e: React.MouseEvent) => {
+  const scrollToSection = (sectionId: string) => (e: React.MouseEvent) => {
     e.preventDefault();
-    if (router.pathname !== "/") {
-      router.push("/#about");
+    if (pathname !== "/") {
+      router.push(`/#${sectionId}`);
     } else {
-      const aboutSection = document.getElementById("about");
-      if (aboutSection) {
-        aboutSection.scrollIntoView({ behavior: "smooth" });
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
       }
     }
   };
@@ -153,13 +154,14 @@ export function Navbar() {
             >
               <a
                 href="#about"
-                onClick={scrollToAbout}
+                onClick={scrollToSection("about")}
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
                 About
               </a>
               <Link
-                href="/know-more"
+                href="#know-more"
+                onClick={scrollToSection("know-more")}
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
               >
                 Know More
@@ -207,13 +209,14 @@ export function Navbar() {
           <div className="px-2 pt-2 pb-3 space-y-1">
             <a
               href="#about"
-              onClick={scrollToAbout}
+              onClick={scrollToSection("about")}
               className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium"
             >
               About
             </a>
             <Link
-              href="/know-more"
+              href="#know-more"
+              onClick={scrollToSection("know-more")}
               className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium"
             >
               Know More

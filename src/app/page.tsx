@@ -2,6 +2,7 @@
 
 import { ColorWheel } from "@/components/ColorWheel";
 import AboutSection from "@/components/AboutSection";
+import KnowMoreSection from "@/components/KnowMoreSection";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -10,10 +11,10 @@ export default function Home() {
 
   useEffect(() => {
     const hash = searchParams.get("hash");
-    if (hash === "about") {
-      const aboutSection = document.getElementById("about");
-      if (aboutSection) {
-        aboutSection.scrollIntoView({ behavior: "smooth" });
+    if (hash === "about" || hash === "know-more") {
+      const section = document.getElementById(hash);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
       }
     }
   }, [searchParams]);
@@ -27,6 +28,7 @@ export default function Home() {
         </h1>
       </div>
       <AboutSection />
+      <KnowMoreSection />
     </div>
   );
 }
