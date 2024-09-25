@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { Dashboard } from "@/components/Dashboard";
+import { Dashboard } from "@/components/dashboard/Dashboard";
 import { Loader2 } from "lucide-react"; // Import the Loader2 icon
 
 export default function DashboardPage() {
