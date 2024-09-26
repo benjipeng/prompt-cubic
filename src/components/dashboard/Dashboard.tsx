@@ -3,15 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import { PromptForm } from "./PromptForm";
 import { PromptList } from "./PromptList";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { PromptEditDialog } from "./PromptEditDialog";
 
 interface Prompt {
   id: string;
@@ -23,7 +15,6 @@ export function Dashboard() {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [editingPrompt, setEditingPrompt] = useState<Prompt | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [deletingPromptId, setDeletingPromptId] = useState<string | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -111,23 +102,13 @@ export function Dashboard() {
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteConfirmation = (id: string) => {
-    setDeletingPromptId(id);
-  };
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase.from("prompts").delete().eq("id", id);
 
-  const handleDelete = async () => {
-    if (deletingPromptId) {
-      const { error } = await supabase
-        .from("prompts")
-        .delete()
-        .eq("id", deletingPromptId);
-
-      if (error) {
-        console.error("Error deleting prompt:", error);
-      } else {
-        setPrompts(prompts.filter((prompt) => prompt.id !== deletingPromptId));
-      }
-      setDeletingPromptId(null);
+    if (error) {
+      console.error("Error deleting prompt:", error);
+    } else {
+      setPrompts(prompts.filter((prompt) => prompt.id !== id));
     }
   };
 
@@ -143,43 +124,14 @@ export function Dashboard() {
       <PromptList
         prompts={prompts}
         onEdit={handleEdit}
-        onDelete={handleDeleteConfirmation}
+        onDelete={handleDelete}
       />
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Prompt</DialogTitle>
-          </DialogHeader>
-          <PromptForm
-            onSubmit={handleSubmit}
-            initialTitle={editingPrompt?.title || ""}
-            initialContent={editingPrompt?.content || ""}
-            isEditing={true}
-          />
-        </DialogContent>
-      </Dialog>
-      <Dialog
-        open={!!deletingPromptId}
-        onOpenChange={() => setDeletingPromptId(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this prompt? This action cannot be
-              undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeletingPromptId(null)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <PromptEditDialog
+        isOpen={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        onSubmit={handleSubmit}
+        editingPrompt={editingPrompt}
+      />
     </div>
   );
 }
