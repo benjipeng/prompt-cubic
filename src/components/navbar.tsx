@@ -102,6 +102,7 @@ export function Navbar() {
           <Button
             onClick={handleLogout}
             variant="destructive"
+            size={"sm"}
             className="bg-red-600 hover:bg-red-300 text-white dark:bg-red-500 dark:hover:bg-red-800"
           >
             Log Out
@@ -110,7 +111,7 @@ export function Navbar() {
       );
     } else {
       return (
-        <Button onClick={() => setIsAuthModalOpen(true)}>
+        <Button onClick={() => setIsAuthModalOpen(true)} size={"sm"}>
           Sign In / Sign Up
         </Button>
       );

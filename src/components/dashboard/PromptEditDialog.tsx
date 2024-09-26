@@ -22,7 +22,7 @@ export function PromptEditDialog({
 }: PromptEditDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="w-full max-w-[90vw] md:max-w-[85vw] lg:max-w-[80vw] xl:max-w-[75vw] h-[60vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Prompt</DialogTitle>
         </DialogHeader>

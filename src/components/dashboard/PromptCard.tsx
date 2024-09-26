@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import ReactMarkdown from "react-markdown";
+import { Pencil, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -38,20 +45,33 @@ export function PromptCard({ prompt, onEdit, onDelete }: PromptCardProps) {
   return (
     <>
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle>{prompt.title}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="prose dark:prose-invert max-w-none">
-            <ReactMarkdown>{prompt.content}</ReactMarkdown>
+          <div className="flex space-x-2">
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={() => onEdit(prompt)}
+              className="h-8 w-8 text-blue-500 hover:text-blue-600"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={handleDeleteClick}
+              className="h-8 w-8 text-red-500 hover:text-red-600"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
-          <div className="mt-4">
-            <Button onClick={() => onEdit(prompt)} className="mr-2">
-              Edit
-            </Button>
-            <Button onClick={handleDeleteClick} variant="destructive">
-              Delete
-            </Button>
+        </CardHeader>
+        <CardDescription className="px-6 border-b pb-2 mb-2" />
+        <CardContent>
+          <div className="max-h-[300px] overflow-y-auto">
+            <div className="prose dark:prose-invert max-w-none overflow-x-auto">
+              <ReactMarkdown>{prompt.content}</ReactMarkdown>
+            </div>
           </div>
         </CardContent>
       </Card>
